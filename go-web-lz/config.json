@@ -1,0 +1,8 @@
+{
+  "Port": "8848",
+  "DBUserName": "root",
+  "DBPassword": "asdfghjkl",
+  "DBIp": "127.0.0.1",
+  "DBPort": "3306",
+  "DBName": "goweb"
+}
