@@ -1,12 +1,18 @@
 package datasource
 
 import (
-	"../conf"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	"go-web-lz/conf"
 	"strings"
 	"time"
 )
+
+type Model struct {
+	ID         int `gorm:"primary_key" json:"id"`
+	CreatedOn  int `json:"created_on"`
+	ModifiedOn int `json:"modified_on"`
+}
 
 var db *gorm.DB
 
@@ -28,5 +34,9 @@ func init() {
 	db.SingularTable(true)        //表生成结尾不带s
 	// 启用Logger，显示详细日志
 	db.LogMode(true)
-	Createtable()
+	//Createtable()
+}
+
+func CloseDB() {
+	defer db.Close()
 }
