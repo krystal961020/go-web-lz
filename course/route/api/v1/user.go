@@ -1,10 +1,10 @@
 package v1
 
 import (
+	"course/models"
+	"course/pkg/e"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
-	"go-web-lz/models"
-	"go-web-lz/pkg/e"
 	"net/http"
 )
 
