@@ -7,7 +7,7 @@ import (
 
 var Sysconfig = &sysconfig{}
 
-func init() {
+func init1() {
 	//指定对应的json配置文件
 	b, err := ioutil.ReadFile("config.json")
 	if err != nil {

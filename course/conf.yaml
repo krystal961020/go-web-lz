@@ -1,3 +1,7 @@
-es:
-  client:
-    host: http://127.0.0.1:9200
+esHost: http://127.0.0.1:9200
+Port: 8848
+DBUserName: root
+DBPassword: asdfghjkl
+DBIp: 127.0.0.1
+DBPort: 3306
+DBName: test
