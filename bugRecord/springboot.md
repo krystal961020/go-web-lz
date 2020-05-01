@@ -62,3 +62,9 @@ log.error("分页条件查询运营-活动管理异常！ex={}", e.getMessage(),
 ```
 ***如果@CacheEvict在统一个实现类中引用同一个value那么该缓存将不生效，应该统一放在controller层处理***
 
+### mybatis错误
+
+Caused by: org.apache.ibatis.reflection.ReflectionException: There is no getter for property named ***
+
+由于mybatis的sql文件已经配置了对应实体字段，但是请求参数没有对应字段则获取不到对应的字段映射错误
+

@@ -8,3 +8,5 @@ Failed to execute goal org.apache.maven.plugins:maven-deploy-plugin:2.8.2:deploy
 ```
 
 ![错误配置路径](img/Snipaste_2020-04-20_20-53-48.png)
+
+![添加正确配置](img/Snipaste_2020-04-21_13-47-57.png)
