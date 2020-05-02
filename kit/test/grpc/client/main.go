@@ -4,36 +4,78 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/go-kit/kit/log"
+	"github.com/hashicorp/consul/api"
 	"google.golang.org/grpc"
+	lb "kit/test/grpc/consul"
 	"kit/test/grpc/pb"
+	"log"
 	"time"
 )
 
-func main1() {
+func main() {
 	var (
-		grpcAddr = flag.String("addr", "127.0.0.1:9002", "gRPC address")
+		_ = flag.Int("n", 0, "Number of calls to service")
+		t = flag.Duration("t", 1*time.Second, "Sleep interval between calls")
 	)
 	flag.Parse()
-	ctx := context.Background()
 
-	conn, err := grpc.Dial(*grpcAddr, grpc.WithInsecure(), grpc.WithTimeout(1*time.Second))
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	// Lookup service in Consul
+	cli, err := api.NewClient(api.DefaultConfig())
 	if err != nil {
-		fmt.Println("gRPC dial err:", err)
+		log.Fatal(err)
+	}
+
+	services, err := cli.Agent().Services()
+	service := services["Calculate-127.0.0.1-9002"]
+	log.Printf("%v", service)
+
+	// Resolver for the "echo" service
+	r, err := lb.NewResolver(cli, service.Service, "")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Dial options
+	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithInsecure())
+	// Enabling WithBlock tells the client to not give up trying to find a server
+	opts = append(opts, grpc.WithBlock())
+	// However, we're still setting a timeout so that if the server takes too long, we still give up
+	opts = append(opts, grpc.WithTimeout(10*time.Second))
+	// Add resolver with RoundRobin balancer here
+	opts = append(opts, grpc.WithBalancer(grpc.RoundRobin(r)))
+
+	// Notice the blank address
+	conn, err := grpc.Dial("", opts...)
+	if err != nil {
+		log.Fatal(err)
 	}
 	defer conn.Close()
 
-	svr := pb.NewCalculateServiceClient(conn)
-	result, err := svr.Calculate(ctx, &pb.CalculateRequest{RequestType: "Add", A: 1, B: 9})
-	if err != nil {
-		fmt.Println("calculate error", err.Error())
+	client := pb.NewCalculateServiceClient(conn)
 
+	timeout := time.Duration(int64(3+(*t).Seconds())) * time.Second
+
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	req := &pb.CalculateRequest{
+		RequestType: "Add",
+		A:           2,
+		B:           3,
 	}
-
-	fmt.Println("result=", result)
+	res, err := client.Calculate(ctx, req)
+	if err != nil {
+		cancel()
+		log.Fatal(err)
+	}
+	fmt.Printf("%s%v\n", "krystal :", res)
+	time.Sleep(*t)
+	cancel()
 }
 
-func main() {
+/*
+func main1() {
 	//main1()
 	//var logger log.Logger
 	//logFormat := log.LogfmtLogger(os.Stdout)
@@ -61,7 +103,7 @@ func main() {
 	}
 	fmt.Println(res)
 }
-
+*/
 //import (
 //	"context"
 //	"google.golang.org/grpc"
