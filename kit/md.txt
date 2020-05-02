@@ -1,0 +1,5 @@
+服务注册 ./test -consul.host localhost -consul.port 8500 -service.host 127.0.0.1 -service.port 9000
+
+服务发现 ./discover -consul.host localhost -consul.port 8500
+
+启动consul ./consul agent -dev
