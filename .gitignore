@@ -14,3 +14,6 @@
 *.iml
 # Dependency directories (remove the comment below to include it)
 # vendor/
+/kit/test/test
+/kit/consul
+/kit/discover/discover
