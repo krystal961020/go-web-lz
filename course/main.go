@@ -17,7 +17,6 @@ func main() {
 		panic(err)
 	}
 }
-
 func newApp() *iris.Application {
 	app := iris.New()
 	app.Configure(iris.WithOptimizations)
